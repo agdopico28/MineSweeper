@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,6 +22,9 @@ import javax.swing.OverlayLayout;
 public class Board extends javax.swing.JPanel {
     public static final int BOMB = -1;
     private int[][] matrix;
+    private TimerInterface timerInterface;
+
+    
     
     public Board() {
         initComponents();
@@ -123,6 +128,12 @@ public class Board extends javax.swing.JPanel {
                 panel.setLayout(new OverlayLayout(panel));
 
                 Button button = new Button();
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        timerInterface.startTimer();
+                    }
+                });
                 button.setSize(getSquareDimension());
 
                 panel.add(button);
@@ -141,6 +152,11 @@ public class Board extends javax.swing.JPanel {
         Dimension d = new Dimension(width / numCols, height / numRows);
         return d;
     }
+    
+    public void setTimerInterface(TimerInterface timerInterface) {
+        this.timerInterface = timerInterface;
+    }
+    
 
     
     @SuppressWarnings("unchecked")

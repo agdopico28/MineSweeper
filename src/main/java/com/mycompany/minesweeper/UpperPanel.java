@@ -4,6 +4,9 @@
  */
 package com.mycompany.minesweeper;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -12,11 +15,15 @@ import javax.swing.border.EmptyBorder;
  *
  * @author alu10701951
  */
-public class UpperPanel extends javax.swing.JPanel {
+public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
 
     /**
      * Creates new form UpperPanel
      */
+    
+    private Timer timer;
+    private int seconds;
+    
     public UpperPanel() {
         initComponents();
         myInit();
@@ -27,7 +34,31 @@ public class UpperPanel extends javax.swing.JPanel {
         Border border = labelTime.getBorder();
         Border margin = new EmptyBorder(7, 5, 5,5);
         labelTime.setBorder(new CompoundBorder(border, margin));
+        seconds = 0;
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                tick();
+            }
+        });
+        
     }
+    
+    private void tick(){
+        seconds++;
+        int min = seconds / 60;
+        int sec = seconds % 60;
+        String timerStr = String.format("%02d:%02d", min, sec);
+        labelTime.setText(timerStr);
+    }
+    
+     @Override
+    public void startTimer() {
+        if(!timer.isRunning()){
+             timer.start();
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -67,9 +98,9 @@ public class UpperPanel extends javax.swing.JPanel {
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         labelTime.setBackground(new java.awt.Color(0, 0, 0));
-        labelTime.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        labelTime.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
         labelTime.setForeground(new java.awt.Color(255, 0, 0));
-        labelTime.setText("0:00");
+        labelTime.setText("00:00");
         labelTime.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -107,5 +138,6 @@ public class UpperPanel extends javax.swing.JPanel {
     private javax.swing.JLabel labelTime;
     // End of variables declaration//GEN-END:variables
 
+   
     
 }

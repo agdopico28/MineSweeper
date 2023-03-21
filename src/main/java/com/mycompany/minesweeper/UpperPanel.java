@@ -23,6 +23,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     
     private Timer timer;
     private int seconds;
+    private InitGamer initGamer;
     
     public UpperPanel() {
         initComponents();
@@ -34,6 +35,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         Border border = labelTime.getBorder();
         Border margin = new EmptyBorder(7, 5, 5,5);
         labelTime.setBorder(new CompoundBorder(border, margin));
+        labelRemaining.setBorder(new CompoundBorder(border, margin));
         seconds = 0;
         timer = new Timer(1000, new ActionListener() {
             @Override
@@ -48,8 +50,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         seconds++;
         int min = seconds / 60;
         int sec = seconds % 60;
-        String timerStr = String.format("%02d:%02d", min, sec);
-        labelTime.setText(timerStr);
+        updateTimerLabel(min, sec);
     }
     
      @Override
@@ -58,6 +59,16 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
              timer.start();
         }
     }
+    
+    public void updateTimerLabel(int min, int sec){
+        String timerStr = String.format("%02d:%02d", min, sec);
+        labelTime.setText(timerStr);
+    }
+
+    public void setInitGamer(InitGamer initGamer) {
+        this.initGamer = initGamer;
+    }
+
 
 
     /**
@@ -71,6 +82,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
+        labelRemaining = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         labelTime = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -80,21 +92,25 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setPreferredSize(new java.awt.Dimension(100, 100));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 103, Short.MAX_VALUE)
-        );
+        labelRemaining.setBackground(new java.awt.Color(0, 0, 0));
+        labelRemaining.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
+        labelRemaining.setForeground(new java.awt.Color(255, 0, 0));
+        labelRemaining.setText("999");
+        labelRemaining.setOpaque(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(39, 18, 40, 18);
+        jPanel1.add(labelRemaining, gridBagConstraints);
 
         add(jPanel1, java.awt.BorderLayout.LINE_START);
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setPreferredSize(new java.awt.Dimension(100, 100));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         labelTime.setBackground(new java.awt.Color(0, 0, 0));
@@ -126,7 +142,10 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonSmileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSmileActionPerformed
-        // TODO add your handling code here:
+        initGamer.initGame();
+        seconds = 0;
+        timer.restart();
+        updateTimerLabel(0, 0);
     }//GEN-LAST:event_buttonSmileActionPerformed
 
 
@@ -135,6 +154,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel labelRemaining;
     private javax.swing.JLabel labelTime;
     // End of variables declaration//GEN-END:variables
 

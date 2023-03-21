@@ -5,7 +5,9 @@
 package com.mycompany.minesweeper;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -19,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
 
-public class Board extends javax.swing.JPanel {
+public class Board extends javax.swing.JPanel implements InitGamer{
     public static final int BOMB = -1;
     private int[][] matrix;
     private TimerInterface timerInterface;
@@ -29,6 +31,29 @@ public class Board extends javax.swing.JPanel {
     public Board() {
         initComponents();
         myInit();
+    }
+    
+    @Override
+    public void initGame(){
+        removeComponents();
+        myInit();
+    }
+    
+    private void myInit() {
+        Image imageBack = new ImageIcon(getClass().getResource("/images/back.png")).getImage();
+        Image newimgBack = imageBack.getScaledInstance(Button.SIZE, Button.SIZE, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+        Icon iconBack = new ImageIcon(newimgBack);
+
+        int numRows = Config.instance.getNumRows();
+        int numCols = Config.instance.getNumCols();
+
+        generateMatrix(numRows, numCols);
+        
+        GridLayout gridLayout = (GridLayout) getLayout();
+        gridLayout.setRows(numRows);
+        gridLayout.setColumns(numCols);
+
+        createGameBoard(numRows, numCols, iconBack);
     }
     
     private void initMatrix(int rows,int cols){
@@ -53,7 +78,11 @@ public class Board extends javax.swing.JPanel {
         }
     }
    
-    
+    public void removeComponents(){
+        for(Component component : getComponents()){
+            remove(component);
+        }
+    }
 
     private void calculateMatrixNumbers(int rows, int cols) {
         for (int row = 0; row < rows; row++) {
@@ -107,41 +136,37 @@ public class Board extends javax.swing.JPanel {
         return true;
     }
 
-    private void myInit() {
-        Image imageBack = new ImageIcon(getClass().getResource("/images/back.png")).getImage();
-        Image newimgBack = imageBack.getScaledInstance(Button.SIZE, Button.SIZE, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
-        Icon iconBack = new ImageIcon(newimgBack);
+   
 
-        int numRows = Config.instance.getNumRows();
-        int numCols = Config.instance.getNumCols();
-
-        generateMatrix(numRows, numCols);
-        
-        GridLayout gridLayout = (GridLayout) getLayout();
-        gridLayout.setRows(numRows);
-        gridLayout.setColumns(numCols);
-
+    private void createGameBoard(int numRows, int numCols, Icon iconBack) throws NumberFormatException {
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 JPanel panel = new JPanel();
                 panel.setBackground(Color.decode("#F5F5F5"));
                 panel.setLayout(new OverlayLayout(panel));
-
-                Button button = new Button();
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        timerInterface.startTimer();
-                    }
-                });
-                button.setSize(getSquareDimension());
+                
+                JLabel label= addLabel(row,col);
+                Button button = addButton();
 
                 panel.add(button);
-
+                panel.add(label);
+                
                 panel.add(new JLabel(iconBack));
                 add(panel);
             }
         }
+    }
+
+    private Button addButton() {
+        Button button = new Button();
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                timerInterface.startTimer();
+            }
+        });
+        button.setSize(getSquareDimension());
+        return button;
     }
 
     private Dimension getSquareDimension() {
@@ -166,6 +191,32 @@ public class Board extends javax.swing.JPanel {
         setBackground(new java.awt.Color(153, 255, 153));
         setLayout(new java.awt.GridLayout(10, 10));
     }// </editor-fold>//GEN-END:initComponents
+
+    private JLabel addLabel(int row, int col) {
+        Color[] COLORS = {
+             Color.decode("#FFFFFF"),
+            Color.decode("#0000FF"),
+            Color.decode("#009900"),
+            Color.decode("#FF0000"),
+            Color.decode("#000099"),
+            Color.decode("#990000"),
+            Color.decode("#009999"),
+            Color.decode("#7F00FF"),
+            Color.decode("#808080")
+        };
+        int item = matrix[row][col];
+        JLabel label = new JLabel();
+        if(item == BOMB){
+            label.setIcon(Util.getIcon("/images/bomb.png"));
+        }else{
+            Color color = COLORS[item];
+            Font font = new Font("Dialog", Font.BOLD, 20);
+            label.setFont(font);
+            label.setForeground(color);
+            label.setText(" "+ (item == 0 ? "" : item));
+        }
+        return label;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

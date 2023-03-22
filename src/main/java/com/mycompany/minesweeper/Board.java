@@ -203,12 +203,6 @@ public class Board extends javax.swing.JPanel implements InitGamer {
 
             }
         }).start();
-
-        for (Button b : listButtons) {
-            b.removeMouseAdapter();
-            Icon icon = Util.getIcon("/images/boton_semi.png");
-            b.setIcon(icon);
-        }
     }
 
     private Dimension getSquareDimension() {

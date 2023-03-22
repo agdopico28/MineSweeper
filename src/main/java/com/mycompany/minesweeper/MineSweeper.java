@@ -32,6 +32,8 @@ public class MineSweeper extends javax.swing.JFrame {
         board.setPreferredSize(getBoardDimension());
         upperPanel.setPreferredSize(new Dimension(100,100));
         upperPanel.setInitGamer(board);
+        board.setFlagInterface(upperPanel);
+        board.myInit();
         pack();
     }
 

@@ -15,7 +15,7 @@ import javax.swing.border.EmptyBorder;
  *
  * @author alu10701951
  */
-public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
+public class UpperPanel extends javax.swing.JPanel implements TimerInterface, FlagInterface {
 
     /**
      * Creates new form UpperPanel
@@ -24,6 +24,8 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     private Timer timer;
     private int seconds;
     private InitGamer initGamer;
+    private int flagRemaining;
+    
     
     public UpperPanel() {
         initComponents();
@@ -31,6 +33,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     }
 
     private void myInit() {
+        resetFlagRemainig();
         buttonSmile.setFocusable(false);
         Border border = labelTime.getBorder();
         Border margin = new EmptyBorder(7, 5, 5,5);
@@ -45,6 +48,11 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         });
         
     }
+
+    private void resetFlagRemainig() {
+        flagRemaining = Config.instance.getNumBombs();
+        updateLabelRemaining();
+    }
     
     private void tick(){
         seconds++;
@@ -53,12 +61,6 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         updateTimerLabel(min, sec);
     }
     
-     @Override
-    public void startTimer() {
-        if(!timer.isRunning()){
-             timer.start();
-        }
-    }
     
     public void updateTimerLabel(int min, int sec){
         String timerStr = String.format("%02d:%02d", min, sec);
@@ -68,6 +70,36 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     public void setInitGamer(InitGamer initGamer) {
         this.initGamer = initGamer;
     }
+    
+    public void updateLabelRemaining(){
+        String remainingStr = String.format("%03d",flagRemaining);
+        labelRemaining.setText(remainingStr);
+    }
+    
+    @Override
+    public void incrementFlagRemaining() {
+        flagRemaining++;
+        updateLabelRemaining();
+    }
+
+    @Override
+    public void decrementFlagRemaining() {
+        flagRemaining--;
+        updateLabelRemaining();
+    }
+    
+     @Override
+    public void startTimer() {
+        if(!timer.isRunning()){
+             timer.start();
+        }
+    }
+    
+    @Override
+    public void stopTimer(){
+       timer.stop();
+    }
+    
 
 
 
@@ -146,6 +178,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
         seconds = 0;
         timer.restart();
         updateTimerLabel(0, 0);
+        resetFlagRemainig();
     }//GEN-LAST:event_buttonSmileActionPerformed
 
 
@@ -157,6 +190,8 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface {
     private javax.swing.JLabel labelRemaining;
     private javax.swing.JLabel labelTime;
     // End of variables declaration//GEN-END:variables
+
+    
 
    
     

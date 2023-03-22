@@ -8,7 +8,7 @@ package com.mycompany.minesweeper;
  *
  * @author alu10701951
  */
-public interface TimerInterface {
-    public void startTimer();
-    public void stopTimer();
+public interface FlagInterface {
+    public void incrementFlagRemaining();
+    public void decrementFlagRemaining();
 }

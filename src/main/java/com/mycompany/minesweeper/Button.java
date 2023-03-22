@@ -27,16 +27,20 @@ public class Button extends JButton{
     public static final int SIZE = 30;
     private CellState state;
     
+    private FlagInterface flagInterface;
+
+    
+    
     private class MyMouseAdapter extends MouseAdapter{
         @Override
         public void mousePressed(MouseEvent e) {
             Button button = (Button)e.getSource();
-            if(SwingUtilities.isRightMouseButton(e)){
+            if(!SwingUtilities.isRightMouseButton(e)){
               
-            if (button.state == CellState.CLOSED) {
-                button.setIcon(Util.getIcon("/images/boton_pressed.jpg"));
-                
-            }
+                if (button.state == CellState.CLOSED) {
+                    button.setIcon(Util.getIcon("/images/boton_pressed.jpg"));
+
+                }
             }
         }
         public void mouseReleased(MouseEvent e) {
@@ -51,8 +55,8 @@ public class Button extends JButton{
             Button button = (Button)e.getSource();
             if(SwingUtilities.isLeftMouseButton(e) &&
                     button.state == CellState.CLOSED){
-            button.state = CellState.OPEN;
-            button.updateState();
+                    button.state = CellState.OPEN;
+                    button.updateState();
             }else if(SwingUtilities.isRightMouseButton(e)){
                 processRightClick(button);
             }
@@ -64,9 +68,11 @@ public class Button extends JButton{
         switch(button.state){
             case CLOSED:
                 button.state = CellState.FLAG;
+                flagInterface.decrementFlagRemaining();
                 break;
             case FLAG:
                 button.state = CellState.QUESTION;
+                flagInterface.incrementFlagRemaining();
                 break;
             case QUESTION:
                 button.state = CellState.CLOSED;
@@ -83,6 +89,10 @@ public class Button extends JButton{
     public Button(){
         super();
         myInit();
+    }
+    
+    public void removeMouseAdapter(){
+        removeMouseListener(mouseAdapter);
     }
 
     private void myInit() {
@@ -129,4 +139,9 @@ public class Button extends JButton{
             question.paintIcon(this, g, 0, 0);
         }
     }
+    
+    public void setFlagInterface(FlagInterface flagInterface) {
+        this.flagInterface = flagInterface;
+    }
+    
 }

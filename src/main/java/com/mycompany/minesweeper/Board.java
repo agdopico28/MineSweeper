@@ -15,12 +15,16 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
@@ -31,6 +35,7 @@ public class Board extends javax.swing.JPanel implements InitGamer {
     private TimerInterface timerInterface;
     private FlagInterface flagInterface;
     private List<Button> listButtons;
+    
 
     public Board() {
         initComponents();
@@ -175,10 +180,57 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         button.setSize(getSquareDimension());
         return button;
     }
+    
+    private Button getButtonAt(int row, int col){
+        int numCols = Config.instance.getNumCols();
+        int index = row* numCols + col;
+        return listButtons.get(index);
+    }
 
     private void processClick(int row, int col) {
         if (matrix[row][col] == BOMB) {
             processGameOver();
+        }else if(matrix[row][col] == 0){
+            processOpenZero(row,col);
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(100);
+                    if(wins()){
+                        processWins();
+                    }
+                } catch (InterruptedException ex) {
+                    
+                }
+            }
+        }).start();
+        
+    }
+    
+    private void processWins() {
+        JOptionPane.showMessageDialog(this,"You win", "Great !!!",JOptionPane.OK_OPTION );
+    }
+    
+    private void processOpenZero(int row, int col) {
+        Button b = getButtonAt(row,col);
+        b.open();
+        for (int incRow = -1; incRow <= 1; incRow++) {
+            for (int incCol = -1; incCol <= 1; incCol++) {
+                int checkRow = row + incRow;
+                int checkCol = col + incCol;
+                if (!(incRow == 0 && incCol == 0)
+                        && isValid(checkRow, checkCol)) {
+                    Button aroundButton = getButtonAt(checkRow, checkCol);
+                    if(aroundButton.canBeOpened()){
+                        aroundButton.open();
+                        if(matrix[checkRow][checkCol] == 0){
+                            processOpenZero(checkRow, checkCol);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -239,6 +291,20 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         }
         return label;
     }
+    
+    private int getNumButtonsNotOpen(){
+        int count = 0;
+        for(Button b: listButtons){
+            if(!b.isOpen()){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    private boolean wins(){
+        return getNumButtonsNotOpen() == Config.instance.getNumBombs();
+    }
 
     public void setTimerInterface(TimerInterface timerInterface) {
         this.timerInterface = timerInterface;
@@ -256,6 +322,10 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         setBackground(new java.awt.Color(153, 255, 153));
         setLayout(new java.awt.GridLayout(10, 10));
     }// </editor-fold>//GEN-END:initComponents
+
+    
+
+    
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

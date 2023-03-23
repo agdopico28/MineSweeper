@@ -56,12 +56,17 @@ public class Button extends JButton{
             if(SwingUtilities.isLeftMouseButton(e) &&
                     button.state == CellState.CLOSED){
                     button.state = CellState.OPEN;
-                    button.updateState();
+                    button.open();
             }else if(SwingUtilities.isRightMouseButton(e)){
                 processRightClick(button);
             }
         }
 
+    }
+    
+    public void open(){
+        state = CellState.OPEN;
+        updateState();
     }
     
     private void processRightClick(Button button){
@@ -142,6 +147,14 @@ public class Button extends JButton{
     
     public void setFlagInterface(FlagInterface flagInterface) {
         this.flagInterface = flagInterface;
+    }
+
+    public boolean canBeOpened() {
+        return state == CellState.CLOSED;
+    }
+    
+    public boolean isOpen() {
+        return state == CellState.OPEN;
     }
     
 }

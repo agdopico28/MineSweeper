@@ -10,39 +10,39 @@ import java.awt.Dimension;
  *
  * @author alu10701951
  */
-public class MineSweeper extends javax.swing.JFrame implements ResizerInterfacer{
+public class MineSweeper extends javax.swing.JFrame implements ResizerInterfacer {
 
     /**
      * Creates new form MineSweeper
      */
     public MineSweeper() {
         initComponents();
-        myInit(); 
+        myInit();
     }
-    
-    private Dimension getBoardDimension(){
+
+    private Dimension getBoardDimension() {
         int width = Button.SIZE * Config.instance.getNumCols();
         int height = Button.SIZE * Config.instance.getNumRows();
-        return new Dimension(width,height);
+        return new Dimension(width, height);
     }
-    
-     private void myInit() {
+
+    private void myInit() {
         setLocationRelativeTo(null);
         board.setTimerInterface(upperPanel);
-        resize();
-        upperPanel.setPreferredSize(new Dimension(100,100));
-        upperPanel.setInitGamer(board);
         board.setFlagInterface(upperPanel);
-        pack();
+        upperPanel.setPreferredSize(new Dimension(100, 100));
+        upperPanel.setInitGamer(board);
+        resize();
     }
-     
-     @Override
-     public void resize(){
-         board.setPreferredSize(getBoardDimension());
-         pack();
-         board.initGame();
-         upperPanel.resetFlagRemainig();
-     }
+
+    @Override
+    public void resize() {
+        board.setPreferredSize(getBoardDimension());
+        pack();
+        board.initGame();
+        upperPanel.resetTimer();
+        upperPanel.resetFlagRemainig();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -86,9 +86,9 @@ public class MineSweeper extends javax.swing.JFrame implements ResizerInterfacer
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-       ConfigDialogM dialog = new ConfigDialogM(this, true);
-       dialog.setResize(this);
-       dialog.setVisible(true);
+        ConfigDialogM dialog = new ConfigDialogM(this, true);
+        dialog.setResize(this);
+        dialog.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
@@ -135,5 +135,4 @@ public class MineSweeper extends javax.swing.JFrame implements ResizerInterfacer
     private com.mycompany.minesweeper.UpperPanel upperPanel;
     // End of variables declaration//GEN-END:variables
 
-   
 }

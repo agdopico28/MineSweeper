@@ -100,6 +100,11 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface, Fl
        timer.stop();
     }
     
+    public void resetTimer(){
+        seconds = 0;
+        timer.stop();
+        updateTimerLabel(0, 0);
+    }
 
 
 

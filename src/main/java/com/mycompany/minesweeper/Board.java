@@ -35,7 +35,6 @@ public class Board extends javax.swing.JPanel implements InitGamer {
     private TimerInterface timerInterface;
     private FlagInterface flagInterface;
     private List<Button> listButtons;
-    
 
     public Board() {
         initComponents();
@@ -180,41 +179,45 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         button.setSize(getSquareDimension());
         return button;
     }
-    
-    private Button getButtonAt(int row, int col){
+
+    private Button getButtonAt(int row, int col) {
         int numCols = Config.instance.getNumCols();
-        int index = row* numCols + col;
+        int index = row * numCols + col;
         return listButtons.get(index);
     }
 
     private void processClick(int row, int col) {
         if (matrix[row][col] == BOMB) {
             processGameOver();
-        }else if(matrix[row][col] == 0){
-            processOpenZero(row,col);
-        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(100);
-                    if(wins()){
-                        processWins();
-                    }
-                } catch (InterruptedException ex) {
-                    
-                }
+        } else {
+            if (matrix[row][col] == 0) {
+                processOpenZero(row, col);
             }
-        }).start();
-        
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(100);
+                        if (wins()) {
+                            processWins();
+                        }
+                    } catch (InterruptedException ex) {
+
+                    }
+                }
+            }).start();
+
+        }
+
     }
-    
+
     private void processWins() {
-        JOptionPane.showMessageDialog(this,"You win", "Great !!!",JOptionPane.OK_OPTION );
+        processGameOver();
+        JOptionPane.showMessageDialog(this, "You win", "Great !!!", JOptionPane.DEFAULT_OPTION);
     }
-    
+
     private void processOpenZero(int row, int col) {
-        Button b = getButtonAt(row,col);
+        Button b = getButtonAt(row, col);
         b.open();
         for (int incRow = -1; incRow <= 1; incRow++) {
             for (int incCol = -1; incCol <= 1; incCol++) {
@@ -223,9 +226,9 @@ public class Board extends javax.swing.JPanel implements InitGamer {
                 if (!(incRow == 0 && incCol == 0)
                         && isValid(checkRow, checkCol)) {
                     Button aroundButton = getButtonAt(checkRow, checkCol);
-                    if(aroundButton.canBeOpened()){
+                    if (aroundButton.canBeOpened()) {
                         aroundButton.open();
-                        if(matrix[checkRow][checkCol] == 0){
+                        if (matrix[checkRow][checkCol] == 0) {
                             processOpenZero(checkRow, checkCol);
                         }
                     }
@@ -255,6 +258,7 @@ public class Board extends javax.swing.JPanel implements InitGamer {
 
             }
         }).start();
+        JOptionPane.showMessageDialog(this, "Game Over", "Game Over !!!", JOptionPane.DEFAULT_OPTION);
     }
 
     private Dimension getSquareDimension() {
@@ -291,18 +295,18 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         }
         return label;
     }
-    
-    private int getNumButtonsNotOpen(){
+
+    private int getNumButtonsNotOpen() {
         int count = 0;
-        for(Button b: listButtons){
-            if(!b.isOpen()){
+        for (Button b : listButtons) {
+            if (!b.isOpen()) {
                 count++;
             }
         }
         return count;
     }
-    
-    private boolean wins(){
+
+    private boolean wins() {
         return getNumButtonsNotOpen() == Config.instance.getNumBombs();
     }
 
@@ -322,10 +326,6 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         setBackground(new java.awt.Color(153, 255, 153));
         setLayout(new java.awt.GridLayout(10, 10));
     }// </editor-fold>//GEN-END:initComponents
-
-    
-
-    
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

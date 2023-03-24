@@ -53,4 +53,14 @@ public class Config {
            default:  throw new AssertionError();
        }
    }
+   
+   public void setLevel (int level){
+        if (level < 0) {
+            this.level = 0;
+        } else if (level > 2) {
+            this.level = 2;
+        } else{
+            this.level = level;
+        }
+    }
 }

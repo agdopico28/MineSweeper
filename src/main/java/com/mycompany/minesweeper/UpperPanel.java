@@ -49,7 +49,7 @@ public class UpperPanel extends javax.swing.JPanel implements TimerInterface, Fl
         
     }
 
-    private void resetFlagRemainig() {
+    public void resetFlagRemainig() {
         flagRemaining = Config.instance.getNumBombs();
         updateLabelRemaining();
     }

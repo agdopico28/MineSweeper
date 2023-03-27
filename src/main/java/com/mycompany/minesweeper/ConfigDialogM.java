@@ -20,6 +20,7 @@ public class ConfigDialogM extends javax.swing.JDialog {
     public ConfigDialogM(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**

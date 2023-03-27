@@ -35,9 +35,16 @@ public class Board extends javax.swing.JPanel implements InitGamer {
     private TimerInterface timerInterface;
     private FlagInterface flagInterface;
     private List<Button> listButtons;
+    private boolean firstClick;
+    private Icon iconBack;
 
     public Board() {
         initComponents();
+        
+        
+        Image imageBack = new ImageIcon(getClass().getResource("/images/back.png")).getImage();
+        Image newimgBack = imageBack.getScaledInstance(Button.SIZE, Button.SIZE, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+        iconBack = new ImageIcon(newimgBack);
 
     }
 
@@ -45,24 +52,21 @@ public class Board extends javax.swing.JPanel implements InitGamer {
     public void initGame() {
         removeComponents();
         Config.instance.setRunning(true);
+        firstClick = true;
         myInit();
     }
 
     public void myInit() {
-        Image imageBack = new ImageIcon(getClass().getResource("/images/back.png")).getImage();
-        Image newimgBack = imageBack.getScaledInstance(Button.SIZE, Button.SIZE, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
-        Icon iconBack = new ImageIcon(newimgBack);
-
         int numRows = Config.instance.getNumRows();
         int numCols = Config.instance.getNumCols();
-
-        generateMatrix(numRows, numCols);
 
         GridLayout gridLayout = (GridLayout) getLayout();
         gridLayout.setRows(numRows);
         gridLayout.setColumns(numCols);
-
-        createGameBoard(numRows, numCols, iconBack);
+        
+        generateMatrix(numRows, numCols, 0, 0);
+        createGameBoard(numRows, numCols);
+        
     }
 
     private void initMatrix(int rows, int cols) {
@@ -74,13 +78,14 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         }
     }
 
-    private void addBombs(int rows, int cols) {
+    private void addBombs(int rows, int cols, int firstRow, int firstCol) {
         int maxBombs = Config.instance.getNumBombs();
         int bombCount = 0;
         while (bombCount < maxBombs) {
             int randRow = (int) (Math.random() * rows);
             int randCol = (int) (Math.random() * cols);
-            if (matrix[randRow][randCol] == 0) {
+            if (matrix[randRow][randCol] == 0 
+                    && !(randRow == firstRow && randCol == firstCol)) {
                 matrix[randRow][randCol] = BOMB;
                 bombCount++;
             }
@@ -117,9 +122,9 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         }
     }
 
-    private void generateMatrix(int rows, int cols) {
+    private void generateMatrix(int rows, int cols, int firstRow, int firstCol) {
         initMatrix(rows, cols);
-        addBombs(rows, cols);
+        addBombs(rows, cols, firstRow, firstCol);
         calculateMatrixNumbers(rows, cols);
         printMatrix(rows, cols);
     }
@@ -145,7 +150,7 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         return true;
     }
 
-    private void createGameBoard(int numRows, int numCols, Icon iconBack) throws NumberFormatException {
+    private void createGameBoard(int numRows, int numCols) throws NumberFormatException {
         listButtons = new ArrayList<>();
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
@@ -172,8 +177,11 @@ public class Board extends javax.swing.JPanel implements InitGamer {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                timerInterface.startTimer();
-                processClick(row, col);
+                if(Config.instance.isRunning()){
+                    timerInterface.startTimer();
+                    processClick(row, col);
+                }
+                
             }
 
         });
@@ -188,8 +196,13 @@ public class Board extends javax.swing.JPanel implements InitGamer {
     }
 
     private void processClick(int row, int col) {
+              
         if(!Config.instance.isRunning()){
             return;
+        }
+        
+        if(firstClick){
+            processFirstClick(row, col);
         }
         if (matrix[row][col] == BOMB) {
             processGameOver();
@@ -213,6 +226,16 @@ public class Board extends javax.swing.JPanel implements InitGamer {
 
         }
 
+    }
+
+    private void processFirstClick(int row, int col) {
+        int numRows = Config.instance.getNumRows();
+        int numCols = Config.instance.getNumCols();
+        removeComponents();
+        generateMatrix(numRows, numCols, row, col);
+        createGameBoard(numRows, numCols);
+        getButtonAt(row,col).open();
+        firstClick = false;
     }
 
     private void processWins() {
